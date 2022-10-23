@@ -3,11 +3,11 @@ import telebot
 import time
 import os
 
-TOKEN = '' # BOT TOKEN
+TOKEN = 'coloque aqui o token' # BOT TOKEN
 
 bot = telebot.TeleBot(TOKEN)
 
-chat_id = '' # CHAT ID DO CANAL ONDE DESEJA ENVIAR MSG
+chat_id = 'coloque aqui o id do chat' # CHAT ID DO CANAL ONDE DESEJA ENVIAR MSG
 
 ray2 = []    # NAO ALTERAR
 loop = 0     # NAO ALTERAR
