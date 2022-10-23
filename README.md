@@ -26,6 +26,7 @@ COMO USAR
 Instale as bibliotecas abaixo
 
 requests
+
 pyTelegramBotAPI
 
 ex: pip install requests
