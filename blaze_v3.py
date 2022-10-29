@@ -3,34 +3,48 @@ import telebot
 import time
 import os
 
-TOKEN = 'coloque seu token' # BOT TOKEN
+TOKEN = 'Coloque seu token'  # BOT TOKEN
 
 bot = telebot.TeleBot(TOKEN)
 
-chat_id = 'coloque o id do chat' # CHAT ID DO CANAL ONDE DESEJA ENVIAR MSG
+chat_id = 'coloque o id do chat'  # CHAT ID DO CANAL ONDE DESEJA ENVIAR MSG
 
 ray2 = []    # NAO ALTERAR
 loop = 0     # NAO ALTERAR
-gale = False # NAO ALTERAR
+gale = False  # NAO ALTERAR
+debug = False
 acertos = 0  # NAO ALTERAR
 erros = 0    # NAO ALTERAR
 
 jogadas = [  # ADICIONE SEUS PALPITES PREDEFINIDOS AQUI, USE OS ABAIXO COMO EXEMPLO
-    ['Preto', 'Preto', 'Preto', 'Preto', 'Vermelho', 'Preto', 'Vermelho', 'Vermelho'], # PADRAO WILLIAM
-    ['Branco', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho'], # PADRAO WILLIAM
-    ['Preto', 'Preto', 'Preto', 'Preto', 'Preto', 'Preto', 'Vermelho', 'Preto'], # PADRAO WILLIAM
-    ['Preto', 'Preto', 'Vermelho', 'Vermelho', 'Preto', 'Preto', 'Vermelho', 'Vermelho'], # PADRAO 2X2
-    ['Vermelho', 'Vermelho', 'Preto', 'Preto', 'Vermelho', 'Vermelho', 'Preto', 'Preto'], # PADRAO 2X2
-    ['Preto', 'Vermelho', 'Preto', 'Vermelho', 'Preto', 'Vermelho', 'Preto', 'Vermelho'], # PADRAO XADREZ
-    ['Vermelho', 'Preto', 'Vermelho', 'Preto', 'Vermelho', 'Preto', 'Vermelho', 'Preto'], # PADRAO XADREZ
-    ['Vermelho', 'Vermelho', 'Vermelho', 'Preto', 'Vermelho', 'Vermelho', 'Vermelho', 'Preto'], # PADRAO 3X1
-    ['Preto', 'Preto', 'Preto', 'Vermelho', 'Preto', 'Preto', 'Preto', 'Vermelho'], # PADRAO 3X1
-    ['Vermelho', 'Vermelho', 'Preto', 'Vermelho', 'Vermelho', 'Preto', 'Preto', 'Vermelho'], # PADRAO 2X1
-    ['Preto', 'Preto', 'Vermelho', 'Preto', 'Preto', 'Vermelho', 'Vermelho', 'Preto'], # PADRAO 2X1
-    ['Preto', 'Preto', 'Preto', 'Preto', 'Preto', 'Preto', 'Preto', 'Preto'], # PADRAO SURF
-    ['Vermelho', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho'], # PADRAO SURF
-    ['Vermelho'], # PADRAO PEZAO
-    ['Branco'] # PADRAO PEZAO
+    ['Preto', 'Preto', 'Preto', 'Preto', 'Vermelho',
+        'Preto', 'Vermelho', 'Vermelho'],  # PADRAO WILLIAM
+    ['Branco', 'Vermelho', 'Vermelho', 'Vermelho',
+        'Vermelho', 'Vermelho'],  # PADRAO WILLIAM
+    ['Preto', 'Preto', 'Preto', 'Preto', 'Preto',
+        'Preto', 'Vermelho', 'Preto'],  # PADRAO WILLIAM
+    ['Preto', 'Preto', 'Vermelho', 'Vermelho', 'Preto',
+        'Preto', 'Vermelho', 'Vermelho'],  # PADRAO 2X2
+    ['Vermelho', 'Vermelho', 'Preto', 'Preto', 'Vermelho',
+        'Vermelho', 'Preto', 'Preto'],  # PADRAO 2X2
+    ['Preto', 'Vermelho', 'Preto', 'Vermelho', 'Preto',
+        'Vermelho', 'Preto', 'Vermelho'],  # PADRAO XADREZ
+    ['Vermelho', 'Preto', 'Vermelho', 'Preto', 'Vermelho',
+        'Preto', 'Vermelho', 'Preto'],  # PADRAO XADREZ
+    ['Vermelho', 'Vermelho', 'Vermelho', 'Preto', 'Vermelho',
+        'Vermelho', 'Vermelho', 'Preto'],  # PADRAO 3X1
+    ['Preto', 'Preto', 'Preto', 'Vermelho', 'Preto',
+        'Preto', 'Preto', 'Vermelho'],  # PADRAO 3X1
+    ['Vermelho', 'Vermelho', 'Preto', 'Vermelho', 'Vermelho',
+        'Preto', 'Preto', 'Vermelho'],  # PADRAO 2X1
+    ['Preto', 'Preto', 'Vermelho', 'Preto', 'Preto',
+        'Vermelho', 'Vermelho', 'Preto'],  # PADRAO 2X1
+    ['Preto', 'Preto', 'Preto', 'Preto', 'Preto',
+        'Preto', 'Preto', 'Preto'],  # PADRAO SURF
+    ['Vermelho', 'Vermelho', 'Vermelho', 'Vermelho', 'Vermelho',
+        'Vermelho', 'Vermelho', 'Vermelho'],  # PADRAO SURF
+    ['Vermelho'],  # PADRAO PEZAO
+    ['Branco']  # PADRAO PEZAO
 ]
 
 entredas = [
@@ -49,29 +63,12 @@ entredas = [
     'Preto',       # Entrada 13
     'Vermelho',    # Entrada 14
     'Preto'        # Entrada 15
-    ]
+]
 
-# CONECAO COM A API BLAZE
+# CONVERTE OS NUMEROS INT EM CORES STRING
 
-def blazeAPI(): # RETORNA O CONTEUDO DO ARRAY
-    url_api = 'https://blaze.com/api/roulette_games/recent'
-
-    response = requests.get(url_api)
-
-    if response.status_code != 200: # VERIFICANDO POSSIVEL ERRO DE COMUNICAÇÃO COM A API
-        debug = True
-        print(response.status_code)
-        while debug: # LOOPA ATÉ OBTER O RESULTADO ESPERADO DA API
-            if response.status_code != 200:
-                print('corrigindo falha de resposta HTTPS')
-                response = None
-                response = requests.get(url_api)
-                print(response.status_code)
-            if response.status_code == 200:
-                debug = False
-            time.sleep(5)
-
-    r = response.json()
+def convertNuminCor(resp): # RECEBE RESPONSE CONVERT EM JSON TRANSFORMA EM STRING E RETORNA O ARRAY
+    r = resp.json()
 
     ray = []
 
@@ -88,6 +85,29 @@ def blazeAPI(): # RETORNA O CONTEUDO DO ARRAY
         ray.append(val)
     return ray
 
+# CONECAO COM A API BLAZE
+
+def blazeAPI():  # RETORNA O CONTEUDO DO ARRAY
+    url_api = 'https://blaze.com/api/roulette_games/recent'
+
+    response = requests.get(url_api)
+
+    verif = response.status_code
+
+    if verif != 200:
+        while True:  # LOOPA ATÉ OBTER O RESULTADO ESPERADO DA API
+
+            if verif != 200:
+                print('corrigindo falha de resposta HTTPS')
+                time.sleep(3)
+                url_api = 'https://blaze.com/api/roulette_games/recent'
+                response = requests.get(url_api)
+                if response.status_code == 200:
+                    print('response: corrigido', verif)
+                    break
+            time.sleep(5)
+    return convertNuminCor(response)
+
 # ENVIAR MENSSAGENS
 
 def enviarMenssagem(text):  # recebe um texto,
@@ -96,7 +116,7 @@ def enviarMenssagem(text):  # recebe um texto,
 
 # CCHECAR A COR ( evita repetir esse codigo)
 
-def corCheck(z):# recebe decisao
+def corCheck(z):  # recebe decisao
     if z == 'Vermelho':
         z = '🔴'
     if z == 'Preto':
@@ -107,7 +127,7 @@ def corCheck(z):# recebe decisao
 
 # TOMA A DECISAO SE O BOT ACERTOU OU NAO O PALPITE
 
-def martinGale(decisao,g):  # recebe array, Palpite
+def martinGale(decisao, g):  # recebe array, Palpite
     global acertos
     global erros
     giro = False
@@ -135,7 +155,7 @@ def martinGale(decisao,g):  # recebe array, Palpite
                     giro = True
                     cont = 0
                     break
-                    
+
         time.sleep(2)
 
 # METODOS DE APOSTA
@@ -152,13 +172,13 @@ def metodos(num):  # recebe array,    OBS: FUTURA ATT DEIXAR ESSA FUNCAO DINAMIC
                 enviarMenssagem(text)
                 met = True
                 time.sleep(3)
-                martinGale(cor,check)
+                martinGale(cor, check)
                 break
     return met
 
 # ENVIA O STATUS DE TEMPO EM TEMPO (FUTURO UPDATE)
 
-def enviarStatus(): # RETORNA O TEXT COM INFORMAÇOES DE STATUS DE ACERTOS E ERROS
+def enviarStatus():  # RETORNA O TEXT COM INFORMAÇOES DE STATUS DE ACERTOS E ERROS
     text = f'''💥🟢 𝗦𝗜𝗡𝗔𝗟 𝗦𝗧𝗔𝗧𝗨𝗦 🟢💥\n\n🎯 𝗔𝗰𝗲𝗿𝘁𝗼𝘀: {([acertos])} \n\n⛔️ 𝗘𝗿𝗿𝗼𝘀: {([erros])}\n\n📌 𝗥𝗼𝗱𝗮𝗱𝗮𝘀: {([acertos + erros])}'''
     enviarMenssagem(text)
 
@@ -170,7 +190,7 @@ while True:
     print('## INFORMACOES DA API ##\n\n')
     print(ray)
 
-    if ray2 == []:        
+    if ray2 == []:
         ray2 = ray
 
     if not gale:
